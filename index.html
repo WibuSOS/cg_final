@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Final Project</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babylonjs/4.0.3/babylon.max.js"></script>
+	<script src="https://github.com/BabylonJS/Babylon.js/blob/master/dist/preview%20release/proceduralTexturesLibrary/babylon.grassProceduralTexture.js"></script>
+	<script src="https://github.com/BabylonJS/Babylon.js/blob/master/dist/preview%20release/proceduralTexturesLibrary/babylon.grassProceduralTexture.min.js"></script>
+	<script src="https://cdn.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+	<script src="https://github.com/BabylonJS/Babylon.js/blob/master/dist/preview%20release/materialsLibrary/babylon.skyMaterial.js"></script>
+	<script src="https://github.com/BabylonJS/Babylon.js/blob/master/dist/materialsLibrary/babylon.skyMaterial.d.ts"> </script>
+	<script src="https://github.com/BabylonJS/Babylon.js/blob/master/dist/materialsLibrary/babylon.skyMaterial.min.js"></script>
+	<script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.js"></script>
+
+	<style>
+        #canvas {
+            width:100%;
+            height:100%;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        window.addEventListener('DOMContentLoaded', function()
+            {
+                var canvas = document.getElementById('canvas');
+
+                var engine = new BABYLON.Engine(canvas, true);
+
+                var models = [];
+
+                var createScene = function(){
+                    //scene
+                    var scene = new BABYLON.Scene(engine);
+                    scene.collisionEnabled = true;
+                    scene.checkCollisions = true;
+					scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+
+                    //ground
+                    var myGround = BABYLON.MeshBuilder.CreateGround("myGround", {width: 1000, height: 1300, subdivisions: 4}, scene);
+					myGround.checkCollisions = true;
+
+                    //grass texture for ground
+                    var grassMaterial = new BABYLON.StandardMaterial("grass", scene);
+					var grassTexture = new BABYLON.GrassProceduralTexture("grassTexture", 256, scene);
+					grassMaterial.ambientTexture = grassTexture;
+                    myGround.material = grassMaterial;
+
+                    //sky
+					var skyMaterial = new BABYLON.SkyMaterial("skyMaterial", scene);
+					skyMaterial.backFaceCulling = false;
+					skyMaterial.luminance = 1;
+					var skyBox = BABYLON.Mesh.CreateBox("skyBox", 500.0, scene);
+					skyBox.material = skyMaterial;
+
+                    //house model
+                    BABYLON.SceneLoader.ImportMesh("","","house.babylon",scene, function(mesh){
+                        models.push(mesh);
+                    });
+                    
+                    //camera
+					var camera = new BABYLON.FlyCamera("Camera",new BABYLON.Vector3(0,10,0), scene); //AWSD
+					camera.attachControl(canvas, true);
+					camera.applyGravity = true;
+					camera.checkCollisions = true;
+					camera.maxCameraSpeed = 1;
+					camera.speed = 10;
+					camera.rollCorrect = 10;
+					camera.ellipsoid = new BABYLON.Vector3(1 , 7, 1);
+
+					canvas.requestPointerLock()
+					document.exitPointerLock = document.exitPointerLock;
+					canvas.onclick = function(){
+					    canvas.requestPointerLock();
+					}
+
+                    //var camera = new BABYLON.ArcRotateCamera("arcCam",BABYLON.Tools.ToRadians(60),BABYLON.Tools.ToRadians(60),1500,BABYLON.Vector3.Zero(),scene);
+                    //camera.attachControl(canvas,true);
+                    
+                    var light = new BABYLON.HemisphericLight("HemiLight",new BABYLON.Vector3(0,5,0),scene);
+                    
+                    return scene;
+                }
+
+                var scene = createScene();
+                engine.runRenderLoop(function()
+                    {
+                        scene.render();
+                    }
+                );
+            }
+        );
+    </script>
+</body>
+</html>
