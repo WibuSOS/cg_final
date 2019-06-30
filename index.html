@@ -29,9 +29,9 @@
 
                 var engine = new BABYLON.Engine(canvas, true);
 
-                var models = [];
-
                 var createScene = function(){
+                    var houseModel1;
+                    
                     //scene
                     var scene = new BABYLON.Scene(engine);
                     scene.collisionEnabled = true;
@@ -39,7 +39,7 @@
 					scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
 
                     //ground
-                    var myGround = BABYLON.MeshBuilder.CreateGround("myGround", {width: 1000, height: 1300, subdivisions: 4}, scene);
+                    var myGround = BABYLON.MeshBuilder.CreateGround("myGround", {width: 1500, height: 2000, subdivisions: 4}, scene);
 					myGround.checkCollisions = true;
 
                     //grass texture for ground
@@ -52,34 +52,55 @@
 					var skyMaterial = new BABYLON.SkyMaterial("skyMaterial", scene);
 					skyMaterial.backFaceCulling = false;
 					skyMaterial.luminance = 1;
-					var skyBox = BABYLON.Mesh.CreateBox("skyBox", 500.0, scene);
+					var skyBox = BABYLON.Mesh.CreateBox("skyBox", 4000.0, scene);
 					skyBox.material = skyMaterial;
 
+                    //light source
+                    var light = new BABYLON.HemisphericLight("HemiLight",new BABYLON.Vector3(0,100,0),scene);
+                    
                     //house model
-                    BABYLON.SceneLoader.ImportMesh("","","house.babylon",scene, function(mesh){
-                        models.push(mesh);
+                    BABYLON.SceneLoader.ImportMesh("","","house.babylon", scene, function(meshes){
+                        meshes.forEach(function(mesh){
+                            mesh.position = new BABYLON.Vector3(0,-1,0);
+                            mesh.checkCollisions = true;
+                            houseModel1 = mesh;
+                        });
                     });
                     
-                    //camera
-					var camera = new BABYLON.FlyCamera("Camera",new BABYLON.Vector3(0,10,0), scene); //AWSD
+                    //camera 1st person
+					var camera = new BABYLON.FlyCamera("Camera",new BABYLON.Vector3(0,70,-500), scene); //AWSD
 					camera.attachControl(canvas, true);
 					camera.applyGravity = true;
 					camera.checkCollisions = true;
 					camera.maxCameraSpeed = 1;
 					camera.speed = 10;
 					camera.rollCorrect = 10;
-					camera.ellipsoid = new BABYLON.Vector3(1 , 7, 1);
+					camera.ellipsoid = new BABYLON.Vector3(10 , 35, 10);
 
-					canvas.requestPointerLock()
+                    //camera 3rd person
+                    // var camera = new BABYLON.ArcRotateCamera("arcCam",BABYLON.Tools.ToRadians(60),BABYLON.Tools.ToRadians(60),2000,BABYLON.Vector3.Zero(),scene);
+                    // camera.attachControl(canvas,true);
+
+                    //GUI
+                    // var menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("Menu", true, scene);
+                    // var fountain_button = BABYLON.GUI.Button.CreateSimpleButton("fountain_button", "Fountain");
+                    // fountain_button.width = "70px";
+                    // fountain_button.height = "70px";
+                    // fountain_button.color = "#000000";
+                    // fountain_button.background = "#ffffff";
+                    // fountain_button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    // fountain_button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                    // fountain_button.left = "10px";
+                    // fountain_button.top = "-120px";
+                    // fountain_button.onPointerUpObservable.add(function(){
+                    //     null
+                    // });
+
+					canvas.requestPointerLock();
 					document.exitPointerLock = document.exitPointerLock;
 					canvas.onclick = function(){
 					    canvas.requestPointerLock();
 					}
-
-                    //var camera = new BABYLON.ArcRotateCamera("arcCam",BABYLON.Tools.ToRadians(60),BABYLON.Tools.ToRadians(60),1500,BABYLON.Vector3.Zero(),scene);
-                    //camera.attachControl(canvas,true);
-                    
-                    var light = new BABYLON.HemisphericLight("HemiLight",new BABYLON.Vector3(0,5,0),scene);
                     
                     return scene;
                 }
