@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Final Project</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babylonjs/4.0.3/babylon.max.js"></script>
+    <script src="https://preview.babylonjs.com/gui/babylon.gui.js"></script> <!-- GUI for babylonjs -->
 	<script src="https://github.com/BabylonJS/Babylon.js/blob/master/dist/preview%20release/proceduralTexturesLibrary/babylon.grassProceduralTexture.js"></script>
 	<script src="https://github.com/BabylonJS/Babylon.js/blob/master/dist/preview%20release/proceduralTexturesLibrary/babylon.grassProceduralTexture.min.js"></script>
 	<script src="https://cdn.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
@@ -68,34 +69,39 @@
                     });
                     
                     //camera 1st person
-					var camera = new BABYLON.FlyCamera("Camera",new BABYLON.Vector3(0,70,-500), scene); //AWSD
-					camera.attachControl(canvas, true);
-					camera.applyGravity = true;
-					camera.checkCollisions = true;
-					camera.maxCameraSpeed = 1;
-					camera.speed = 10;
-					camera.rollCorrect = 10;
-					camera.ellipsoid = new BABYLON.Vector3(10 , 35, 10);
+					// var camera = new BABYLON.FlyCamera("Camera",new BABYLON.Vector3(0,70,-500), scene); //AWSD
+					// camera.attachControl(canvas, true);
+					// camera.applyGravity = true;
+					// camera.checkCollisions = true;
+					// camera.maxCameraSpeed = 1;
+					// camera.speed = 10;
+					// camera.rollCorrect = 10;
+					// camera.ellipsoid = new BABYLON.Vector3(10 , 35, 10);
 
                     //camera 3rd person
-                    // var camera = new BABYLON.ArcRotateCamera("arcCam",BABYLON.Tools.ToRadians(60),BABYLON.Tools.ToRadians(60),2000,BABYLON.Vector3.Zero(),scene);
-                    // camera.attachControl(canvas,true);
+                    var camera = new BABYLON.ArcRotateCamera("arcCam",BABYLON.Tools.ToRadians(60),BABYLON.Tools.ToRadians(60),2000,BABYLON.Vector3.Zero(),scene);
+                    camera.attachControl(canvas,true);
 
                     //GUI
-                    // var menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("Menu", true, scene);
-                    // var fountain_button = BABYLON.GUI.Button.CreateSimpleButton("fountain_button", "Fountain");
-                    // fountain_button.width = "70px";
-                    // fountain_button.height = "70px";
-                    // fountain_button.color = "#000000";
-                    // fountain_button.background = "#ffffff";
-                    // fountain_button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                    // fountain_button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                    // fountain_button.left = "10px";
-                    // fountain_button.top = "-120px";
-                    // fountain_button.onPointerUpObservable.add(function(){
-                    //     null
-                    // });
+                    var menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("Menu");
 
+                    var fountain_button = BABYLON.GUI.Button.CreateSimpleButton("fountain_button", "Fountain");
+                    fountain_button.width = "100px";
+                    fountain_button.height = "50px";
+                    fountain_button.cornerRadius = 20;
+                    fountain_button.color = "white";
+                    fountain_button.background = "blue";
+                    fountain_button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    fountain_button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                    fountain_button.left = "30px";
+                    fountain_button.top = "-120px";
+                    fountain_button.onPointerUpObservable.add(function(){
+                        alert("it works!!!");
+                    });
+
+                    menu.addControl(fountain_button);
+
+                    //pointer lock
 					canvas.requestPointerLock();
 					document.exitPointerLock = document.exitPointerLock;
 					canvas.onclick = function(){
