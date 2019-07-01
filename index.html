@@ -244,42 +244,70 @@
                     //GUI
                     var menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("Menu");
 
-                    var fountain_button = BABYLON.GUI.Button.CreateSimpleButton("fountain_button", "Fountain");
-                    fountain_button.width = "100px";
-                    fountain_button.height = "50px";
-                    fountain_button.cornerRadius = 20;
-                    fountain_button.color = "white";
-                    fountain_button.background = "blue";
-                    fountain_button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                    fountain_button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                    fountain_button.left = "30px";
-                    fountain_button.top = "-120px";
-                    fountain_button.onPointerUpObservable.add(function(){
-                        alert("it works!!!");
+                    var chair_button = BABYLON.GUI.Button.CreateSimpleButton("chair_button", "Chair");
+                    chair_button.width = "100px";
+                    chair_button.height = "50px";
+                    chair_button.cornerRadius = 20;
+                    chair_button.color = "white";
+                    chair_button.background = "blue";
+                    chair_button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    chair_button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                    chair_button.left = "30px";
+                    chair_button.top = "-120px";
+                    chair_button.onPointerUpObservable.add(function(){
+                        BABYLON.SceneLoader.ImportMesh("","","chair.babylon", scene, function(meshes){
+                            meshes.forEach(function(mesh){
+                                mesh.position = new BABYLON.Vector3(0,14,-300);
+                                mesh.scaling = new BABYLON.Vector3(0.8,0.8,0.8);
+                                mesh.checkCollisions = true;
+                                gizmoManager.attachableMeshes.push(mesh);
+                            });
+                        });
                     });
 
-                    var lazyChair_button = BABYLON.GUI.Button.CreateSimpleButton("lazyChair_button", "Lazy Chair");
+                    var lazyChair_button = BABYLON.GUI.Button.CreateSimpleButton("LazyChair_button", "Lazy Chair");
                     lazyChair_button.width = "100px";
                     lazyChair_button.height = "50px";
                     lazyChair_button.cornerRadius = 20;
                     lazyChair_button.color = "white";
-                    lazyChair_button.background = "green";
+                    lazyChair_button.background = "red";
                     lazyChair_button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                     lazyChair_button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
                     lazyChair_button.left = "30px";
                     lazyChair_button.top = "-190px";
                     lazyChair_button.onPointerUpObservable.add(function(){
-                        BABYLON.SceneLoader.ImportMesh("","","house.babylon", scene, function(meshes){
+                        BABYLON.SceneLoader.ImportMesh("","","bag-chair.babylon", scene, function(meshes){
                             meshes.forEach(function(mesh){
-                                mesh.position = new BABYLON.Vector3(0,-1,600);
-                                // mesh.scaling = new BABYLON.Vector3(50,50,50);
+                                mesh.position = new BABYLON.Vector3(100,1,-600);
+                                mesh.scaling = new BABYLON.Vector3(1.8,1.8,1.8);
                                 mesh.checkCollisions = true;
                                 gizmoManager.attachableMeshes.push(mesh);
                             });
                         });
                     });
                     
-                    //camera Button
+                    var tree_button = BABYLON.GUI.Button.CreateSimpleButton("tree_button", "Tree");
+                    tree_button.width = "100px";
+                    tree_button.height = "50px";
+                    tree_buttoncornerRadius = 20;
+                    tree_button.color = "white";
+                    tree_button.background = "green";
+                    tree_button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                    tree_button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                    tree_button.left = "-30px";
+                    tree_button.top = "-190px";
+                    tree_button.onPointerUpObservable.add(function(){
+                        BABYLON.SceneLoader.ImportMesh("","","tree-05.babylon", scene, function(meshes){
+                            meshes.forEach(function(mesh){
+                                mesh.position = new BABYLON.Vector3(-500,-1,-600);
+                                mesh.scaling = new BABYLON.Vector3(10,10,10);
+                                mesh.checkCollisions = true;
+                                gizmoManager.attachableMeshes.push(mesh);
+                            });
+                        });
+                    });
+                    
+                    //camera button & description
                     var text1 = new BABYLON.GUI.TextBlock();
                     text1.text = "ArcCam";
                     text1.width = 0.4;
@@ -312,10 +340,12 @@
                         // camera2.rotation = (scene.activeCamera == camera2 ? camera1.lockedTarget : null );
                     });
                 
+                    //Button activation
                     menu.addControl(button1);  
                     menu.addControl(text1);
-                    menu.addControl(fountain_button);
+                    menu.addControl(chair_button);
                     menu.addControl(lazyChair_button);
+                    menu.addControl(tree_button);
 
                     //pointer lock
 					canvas.requestPointerLock();
