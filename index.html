@@ -163,7 +163,6 @@
                     //manager for editing model in real-time
                     var gizmoManager = new BABYLON.GizmoManager(scene);
                     var delete_model = false;
-                    // gizmoManager.boundingBoxGizmoEnabled = true;
                     gizmoManager.attachableMeshes = [];
 
                     //toggle gizmos & delete items with keyboard buttons
@@ -244,6 +243,7 @@
                     //GUI
                     var menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("Menu");
 
+                    //button 1
                     var chair_button = BABYLON.GUI.Button.CreateSimpleButton("chair_button", "Chair");
                     chair_button.width = "100px";
                     chair_button.height = "50px";
@@ -265,7 +265,8 @@
                         });
                     });
 
-                    var lazyChair_button = BABYLON.GUI.Button.CreateSimpleButton("LazyChair_button", "Lazy Chair");
+                    //button 2
+                    var lazyChair_button = BABYLON.GUI.Button.CreateSimpleButton("lazyChair_button", "Lazy Chair");
                     lazyChair_button.width = "100px";
                     lazyChair_button.height = "50px";
                     lazyChair_button.cornerRadius = 20;
@@ -286,10 +287,11 @@
                         });
                     });
                     
+                    //button 3
                     var tree_button = BABYLON.GUI.Button.CreateSimpleButton("tree_button", "Tree");
                     tree_button.width = "100px";
                     tree_button.height = "50px";
-                    tree_buttoncornerRadius = 20;
+                    tree_button.cornerRadius = 20;
                     tree_button.color = "white";
                     tree_button.background = "green";
                     tree_button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
@@ -325,7 +327,7 @@
                     button1.height = "40px";
                     button1.width = "150px";
                     button1.color = "white";
-                    button1.background = "green";
+                    button1.background = "purple";
                     button1.verticalAlignment = 0;
                     button1.top = "5px";
                     button1.left = "5px";
@@ -340,7 +342,7 @@
                         // camera2.rotation = (scene.activeCamera == camera2 ? camera1.lockedTarget : null );
                     });
                 
-                    //Button activation
+                    //button activation
                     menu.addControl(button1);  
                     menu.addControl(text1);
                     menu.addControl(chair_button);
