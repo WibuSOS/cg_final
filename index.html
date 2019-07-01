@@ -56,6 +56,34 @@
                     scene.checkCollisions = true;
 					scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
 
+                    //function to download scene
+                    var objectUrl;
+                    function doDownload(filename, scene) {
+                        if(objectUrl) {
+                            window.URL.revokeObjectURL(objectUrl);
+                        }
+
+                        var serializedScene = BABYLON.SceneSerializer.Serialize(scene);
+
+                        var strScene = JSON.stringify(serializedScene);
+
+                        if (filename.toLowerCase().lastIndexOf(".babylon") !== filename.length - 8 || filename.length < 9){
+                            filename += ".babylon";
+                        }
+
+                        var blob = new Blob ( [ strScene ], { type : "octet/stream" } );
+
+                        // turn blob into an object URL; saved as a member, so can be cleaned out later
+                        objectUrl = (window.webkitURL || window.URL).createObjectURL(blob);
+
+                        var link = window.document.createElement('a');
+                        link.href = objectUrl;
+                        link.download = filename;
+                        var click = document.createEvent("MouseEvents");
+                        click.initEvent("click", true, false);
+                        link.dispatchEvent(click);          
+                    }
+
                     //ground
                     var myGround = BABYLON.MeshBuilder.CreateGround("myGround", {width: 1500, height: 2000, subdivisions: 4}, scene);
 					myGround.checkCollisions = true;
@@ -138,7 +166,7 @@
                     // gizmoManager.boundingBoxGizmoEnabled = true;
                     gizmoManager.attachableMeshes = [];
 
-                    // Toggle gizmos & delete items with keyboard buttons
+                    //toggle gizmos & delete items with keyboard buttons
                     document.onkeydown = (e)=>{
                         if(e.key == 'x' || e.key == 'X'){
                             gizmoManager.positionGizmoEnabled = !gizmoManager.positionGizmoEnabled;
@@ -163,36 +191,41 @@
                             gizmoManager.boundingBoxGizmoEnabled = false;
                             delete_model = true;
                         }
+                        if(e.key == 'u' || e.key == 'U'){
+                            if(confirm('Do you want to download current scene?')){
+                                doDownload('cg_final', scene);
+                            } else {
+                                // Do nothing!
+                            }
+                        }
                     }
 
-                    //Delete model after pressing n and clicking it with mouse
+                    //delete model after pressing n and clicking it with mouse
                     scene.onPointerDown = function(evt, pickResult){
                         if (pickResult.hit && delete_model){
                             pickResult.pickedMesh.dispose();
                         }
                     };
                     
-                    //house model
+                    //house model 1
                     var house_model = [];
                     BABYLON.SceneLoader.ImportMesh("","","house.babylon", scene, function(meshes){
-                        // meshes.forEach(function(mesh, index){
-                        //     if(index == 0){
-                        //         house_model = mesh;
-                        //     }
-                        //     else if(index > 0){
-                        //         house_model = BABYLON.Mesh.MergeMeshes([house_model, mesh], true, true, undefined, false, true);
-                        //     }
-                        // });
-                        // house_model.position = new BABYLON.Vector3(0,-10,0);
-                        // house_model.checkCollisions = true;
-                        // house_model.isPickable = true;
-                        // gizmoManager.attachableMeshes.push(house_model);
                         meshes.forEach(function(mesh){
                             mesh.position = new BABYLON.Vector3(0,-1,0);
                             mesh.checkCollisions = true;
                             house_model.push(mesh);
                         });
                     });
+
+                    //house model 2
+                    // BABYLON.SceneLoader.ImportMesh("","","mini-house.babylon", scene, function(meshes){
+                    //     meshes.forEach(function(mesh){
+                    //         mesh.position = new BABYLON.Vector3(0,0,0);
+                    //         mesh.scaling = new BABYLON.Vector3(1000,1000,1000);
+                    //         mesh.checkCollisions = true;
+                    //         house_model.push(mesh);
+                    //     });
+                    // });
                     
                     //camera 3rd person
                     var camera1 = new BABYLON.ArcRotateCamera("arcCamera", BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(60), 2000, new BABYLON.Vector3(0, 0, 0), scene);
@@ -207,8 +240,6 @@
 					camera2.speed = 10;
 					camera2.rollCorrect = 10;
 					camera2.ellipsoid = new BABYLON.Vector3(10 , 35, 10);
-
-                    
 
                     //GUI
                     var menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("Menu");
@@ -248,9 +279,7 @@
                         });
                     });
                     
-                    //Camera Button
-                    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-        
+                    //camera Button
                     var text1 = new BABYLON.GUI.TextBlock();
                     text1.text = "ArcCam";
                     text1.width = 0.4;
@@ -283,8 +312,8 @@
                         // camera2.rotation = (scene.activeCamera == camera2 ? camera1.lockedTarget : null );
                     });
                 
-                    advancedTexture.addControl(button1);  
-                    advancedTexture.addControl(text1);
+                    menu.addControl(button1);  
+                    menu.addControl(text1);
                     menu.addControl(fountain_button);
                     menu.addControl(lazyChair_button);
 
