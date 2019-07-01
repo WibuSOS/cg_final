@@ -13,7 +13,24 @@
 	<script src="https://github.com/BabylonJS/Babylon.js/blob/master/dist/materialsLibrary/babylon.skyMaterial.d.ts"> </script>
 	<script src="https://github.com/BabylonJS/Babylon.js/blob/master/dist/materialsLibrary/babylon.skyMaterial.min.js"></script>
 	<script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.js"></script>
-
+    <script src="babylon.js"></script>
+    <script src="babylon.objFileLoader.js"></script>
+    <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+    <script src="https://preview.babylonjs.com/ammo.js"></script>
+    <script src="https://preview.babylonjs.com/cannon.js"></script>
+    <script src="https://preview.babylonjs.com/Oimo.js"></script>
+    <script src="https://preview.babylonjs.com/gltf_validator.js"></script>
+    <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+    <script src="https://preview.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+    <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+    <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+    <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+    <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+    <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+    
 	<style>
         #canvas {
             width:100%;
@@ -43,11 +60,56 @@
                     var myGround = BABYLON.MeshBuilder.CreateGround("myGround", {width: 1500, height: 2000, subdivisions: 4}, scene);
 					myGround.checkCollisions = true;
 
+                    //tree
+                    var tree = new BABYLON.SceneLoader.ImportMesh("","","tree-05.babylon", scene, function(meshes){
+                    meshes.forEach(function(mesh){
+                        mesh.position = new BABYLON.Vector3(500,-1,0);
+                        mesh.checkCollisions = true;
+                        mesh.scaling = new BABYLON.Vector3(10,10,10);
+                        treeModel1 = mesh;
+                        });
+                    });
+                   
                     //grass texture for ground
                     var grassMaterial = new BABYLON.StandardMaterial("grass", scene);
 					var grassTexture = new BABYLON.GrassProceduralTexture("grassTexture", 256, scene);
 					grassMaterial.ambientTexture = grassTexture;
                     myGround.material = grassMaterial;
+                    
+                    //rear fence 
+                    var rfence = BABYLON.MeshBuilder.CreateBox("box", {width: 1500, height: 100,size: 1}, scene);
+                    rfence.position.x = 0;
+                    rfence.position.y = 1
+                    rfence.position.z = 1000;
+                    rfence.checkCollisions = true
+                    var material = new BABYLON.StandardMaterial("material", scene);
+                    var texture = new BABYLON.WoodProceduralTexture("texture", 1024, scene);
+                    material.diffuseTexture = texture;
+                    rfence.material = material;
+
+                    //left fence 
+                    var lfence = BABYLON.MeshBuilder.CreateBox("box", {width: 2000, height: 100,size: 1}, scene);
+                    lfence.position.x = -750;
+                    lfence.position.y = 1
+                    lfence.position.z = 0;
+                    lfence.rotation.y = Math.PI/2;
+                    lfence.checkCollisions = true
+                    var material = new BABYLON.StandardMaterial("material", scene);
+                    var texture = new BABYLON.WoodProceduralTexture("texture", 1024, scene);
+                    material.diffuseTexture = texture;
+                    lfence.material = material;
+
+                    //right fence
+                    var rtfence = BABYLON.MeshBuilder.CreateBox("box", {width: 2000, height: 100,size: 1}, scene);
+                    rtfence.position.x = 750;
+                    rtfence.position.y = 1
+                    rtfence.position.z = 0;
+                    rtfence.rotation.y = Math.PI/2;
+                    rtfence.checkCollisions = true
+                    var material = new BABYLON.StandardMaterial("material", scene);
+                    var texture = new BABYLON.WoodProceduralTexture("texture", 1024, scene);
+                    material.diffuseTexture = texture;
+                    rtfence.material = material;
 
                     //sky
 					var skyMaterial = new BABYLON.SkyMaterial("skyMaterial", scene);
@@ -121,19 +183,21 @@
                         });
                     });
                     
-                    //camera 1st person
-					// var camera = new BABYLON.FlyCamera("Camera",new BABYLON.Vector3(0,70,-500), scene); //AWSD
-					// camera.attachControl(canvas, true);
-					// camera.applyGravity = true;
-					// camera.checkCollisions = true;
-					// camera.maxCameraSpeed = 1;
-					// camera.speed = 10;
-					// camera.rollCorrect = 10;
-					// camera.ellipsoid = new BABYLON.Vector3(10 , 35, 10);
-
                     //camera 3rd person
-                    var camera = new BABYLON.ArcRotateCamera("arcCam",BABYLON.Tools.ToRadians(60),BABYLON.Tools.ToRadians(60),2000,BABYLON.Vector3.Zero(),scene);
-                    camera.attachControl(canvas,true);
+                    var camera1 = new BABYLON.ArcRotateCamera("Camera", -Math.PI/2, 1.4, 60, new BABYLON.Vector3(0, 1900, -500), scene);
+	                camera1.attachControl(canvas);
+
+	                 //camera 1st person
+					var camera2 = new BABYLON.FlyCamera("Camera",new BABYLON.Vector3(0,70, -1000), scene); //AWSD
+					camera2.attachControl(canvas, true);
+					camera2.applyGravity = true;
+					camera2.checkCollisions = true;
+					camera2.maxCameraSpeed = 1;
+					camera2.speed = 10;
+					camera2.rollCorrect = 10;
+					camera2.ellipsoid = new BABYLON.Vector3(10 , 35, 10);
+
+                    
 
                     //GUI
                     var menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("Menu");
@@ -172,7 +236,44 @@
                             });
                         });
                     });
-
+                    
+                    //Camera Button
+                    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        
+                    var text1 = new BABYLON.GUI.TextBlock();
+                    text1.text = "ArcCam";
+                    text1.width = 0.4;
+                    text1.height = "40px";
+                    text1.width = "150px";
+                    text1.color = "white";
+                    text1.background = "green";
+                    text1.verticalAlignment = 0;
+                    text1.top = "45px";
+                    text1.left = "5px";
+                    text1.horizontalAlignment = 0;
+                
+                    var button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "Change Camera");
+                    button1.width = 0.4;
+                    button1.height = "40px";
+                    button1.width = "150px";
+                    button1.color = "white";
+                    button1.background = "green";
+                    button1.verticalAlignment = 0;
+                    button1.top = "5px";
+                    button1.left = "5px";
+                    button1.horizontalAlignment = 0;
+                
+                    button1.onPointerDownObservable.add(function(info) {
+                        scene.activeCamera = (scene.activeCamera == camera1 ? camera2 : camera1);
+                        scene.activeCamera.attachControl(canvas, true);
+                        text1.text = (scene.activeCamera == camera1 ? "ArcCam" : "FlyCam");
+                        // camera2.parent = (scene.activeCamera == camera1 ? camera1 : null );
+                        camera2.lockedTarget = (scene.activeCamera == camera1 ? camera1.lockedTarget : null );
+                        // camera2.rotation = (scene.activeCamera == camera2 ? camera1.lockedTarget : null );
+                    });
+                
+                    advancedTexture.addControl(button1);  
+                    advancedTexture.addControl(text1);
                     menu.addControl(fountain_button);
                     menu.addControl(lazyChair_button);
 
