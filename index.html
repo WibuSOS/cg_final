@@ -77,7 +77,7 @@
                     myGround.material = grassMaterial;
                     
                     //rear fence 
-                    var rfence = BABYLON.MeshBuilder.CreateBox("box", {width: 1500, height: 100,size: 1}, scene);
+                    var rfence = BABYLON.MeshBuilder.CreateBox("box", {width: 1500, height: 120,size: 1}, scene);
                     rfence.position.x = 0;
                     rfence.position.y = 1
                     rfence.position.z = 1000;
@@ -87,8 +87,19 @@
                     material.diffuseTexture = texture;
                     rfence.material = material;
 
+                    //front fence
+                    var ffence = BABYLON.MeshBuilder.CreateBox("box", {width: 1500, height: 120,size: 1}, scene);
+                    ffence.position.x = 0;
+                    ffence.position.y = 1
+                    ffence.position.z = -1000;
+                    ffence.checkCollisions = true
+                    var material = new BABYLON.StandardMaterial("material", scene);
+                    var texture = new BABYLON.WoodProceduralTexture("texture", 1024, scene);
+                    material.diffuseTexture = texture;
+                    ffence.material = material;
+
                     //left fence 
-                    var lfence = BABYLON.MeshBuilder.CreateBox("box", {width: 2000, height: 100,size: 1}, scene);
+                    var lfence = BABYLON.MeshBuilder.CreateBox("box", {width: 2000, height: 120,size: 1}, scene);
                     lfence.position.x = -750;
                     lfence.position.y = 1
                     lfence.position.z = 0;
@@ -100,7 +111,7 @@
                     lfence.material = material;
 
                     //right fence
-                    var rtfence = BABYLON.MeshBuilder.CreateBox("box", {width: 2000, height: 100,size: 1}, scene);
+                    var rtfence = BABYLON.MeshBuilder.CreateBox("box", {width: 2000, height: 120,size: 1}, scene);
                     rtfence.position.x = 750;
                     rtfence.position.y = 1
                     rtfence.position.z = 0;
@@ -184,12 +195,12 @@
                     });
                     
                     //camera 3rd person
-                    var camera1 = new BABYLON.ArcRotateCamera("Camera", -Math.PI/2, 1.4, 60, new BABYLON.Vector3(0, 1900, -500), scene);
+                    var camera1 = new BABYLON.ArcRotateCamera("arcCamera", BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(60), 2000, new BABYLON.Vector3(0, 0, 0), scene);
 	                camera1.attachControl(canvas);
 
 	                 //camera 1st person
-					var camera2 = new BABYLON.FlyCamera("Camera",new BABYLON.Vector3(0,70, -1000), scene); //AWSD
-					camera2.attachControl(canvas, true);
+					var camera2 = new BABYLON.FlyCamera("flyCamera",new BABYLON.Vector3(0,70, -900), scene);
+					camera2.attachControl(canvas, true); //AWSD
 					camera2.applyGravity = true;
 					camera2.checkCollisions = true;
 					camera2.maxCameraSpeed = 1;
