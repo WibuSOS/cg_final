@@ -5,6 +5,7 @@
     <title>Final Project</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babylonjs/4.0.3/babylon.max.js"></script>
     <script src="https://preview.babylonjs.com/gui/babylon.gui.js"></script> <!-- GUI for babylonjs -->
+    <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script> <!-- Pointer interactions -->
 	<script src="https://github.com/BabylonJS/Babylon.js/blob/master/dist/preview%20release/proceduralTexturesLibrary/babylon.grassProceduralTexture.js"></script>
 	<script src="https://github.com/BabylonJS/Babylon.js/blob/master/dist/preview%20release/proceduralTexturesLibrary/babylon.grassProceduralTexture.min.js"></script>
 	<script src="https://cdn.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
@@ -31,7 +32,6 @@
                 var engine = new BABYLON.Engine(canvas, true);
 
                 var createScene = function(){
-                    var houseModel1;
                     
                     //scene
                     var scene = new BABYLON.Scene(engine);
@@ -58,13 +58,66 @@
 
                     //light source
                     var light = new BABYLON.HemisphericLight("HemiLight",new BABYLON.Vector3(0,100,0),scene);
+
+                    //manager for editing model in real-time
+                    var gizmoManager = new BABYLON.GizmoManager(scene);
+                    var delete_model = false;
+                    // gizmoManager.boundingBoxGizmoEnabled = true;
+                    gizmoManager.attachableMeshes = [];
+
+                    // Toggle gizmos & delete items with keyboard buttons
+                    document.onkeydown = (e)=>{
+                        if(e.key == 'x' || e.key == 'X'){
+                            gizmoManager.positionGizmoEnabled = !gizmoManager.positionGizmoEnabled;
+                            delete_model = false;
+                        }
+                        if(e.key == 'c' || e.key == 'C'){
+                            gizmoManager.rotationGizmoEnabled = !gizmoManager.rotationGizmoEnabled;
+                            delete_model = false;
+                        }
+                        if(e.key == 'b' || e.key == 'B'){
+                            gizmoManager.scaleGizmoEnabled = !gizmoManager.scaleGizmoEnabled;
+                            delete_model = false;
+                        }
+                        if(e.key == 'z' || e.key == 'Z'){
+                            gizmoManager.boundingBoxGizmoEnabled = !gizmoManager.boundingBoxGizmoEnabled;
+                            delete_model = false;
+                        }
+                        if(e.key == 'n' || e.key == 'N'){
+                            gizmoManager.positionGizmoEnabled = false;
+                            gizmoManager.rotationGizmoEnabled = false;
+                            gizmoManager.scaleGizmoEnabled = false;
+                            gizmoManager.boundingBoxGizmoEnabled = false;
+                            delete_model = true;
+                        }
+                    }
+
+                    //Delete model after pressing n and clicking it with mouse
+                    scene.onPointerDown = function(evt, pickResult){
+                        if (pickResult.hit && delete_model){
+                            pickResult.pickedMesh.dispose();
+                        }
+                    };
                     
                     //house model
+                    var house_model = [];
                     BABYLON.SceneLoader.ImportMesh("","","house.babylon", scene, function(meshes){
+                        // meshes.forEach(function(mesh, index){
+                        //     if(index == 0){
+                        //         house_model = mesh;
+                        //     }
+                        //     else if(index > 0){
+                        //         house_model = BABYLON.Mesh.MergeMeshes([house_model, mesh], true, true, undefined, false, true);
+                        //     }
+                        // });
+                        // house_model.position = new BABYLON.Vector3(0,-10,0);
+                        // house_model.checkCollisions = true;
+                        // house_model.isPickable = true;
+                        // gizmoManager.attachableMeshes.push(house_model);
                         meshes.forEach(function(mesh){
                             mesh.position = new BABYLON.Vector3(0,-1,0);
                             mesh.checkCollisions = true;
-                            houseModel1 = mesh;
+                            house_model.push(mesh);
                         });
                     });
                     
@@ -99,7 +152,29 @@
                         alert("it works!!!");
                     });
 
+                    var lazyChair_button = BABYLON.GUI.Button.CreateSimpleButton("lazyChair_button", "Lazy Chair");
+                    lazyChair_button.width = "100px";
+                    lazyChair_button.height = "50px";
+                    lazyChair_button.cornerRadius = 20;
+                    lazyChair_button.color = "white";
+                    lazyChair_button.background = "green";
+                    lazyChair_button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    lazyChair_button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                    lazyChair_button.left = "30px";
+                    lazyChair_button.top = "-190px";
+                    lazyChair_button.onPointerUpObservable.add(function(){
+                        BABYLON.SceneLoader.ImportMesh("","","house.babylon", scene, function(meshes){
+                            meshes.forEach(function(mesh){
+                                mesh.position = new BABYLON.Vector3(0,-1,600);
+                                // mesh.scaling = new BABYLON.Vector3(50,50,50);
+                                mesh.checkCollisions = true;
+                                gizmoManager.attachableMeshes.push(mesh);
+                            });
+                        });
+                    });
+
                     menu.addControl(fountain_button);
+                    menu.addControl(lazyChair_button);
 
                     //pointer lock
 					canvas.requestPointerLock();
