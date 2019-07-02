@@ -122,6 +122,12 @@
                     var myGround = BABYLON.MeshBuilder.CreateGround("myGround", {width: 1500, height: 2000, subdivisions: 4}, scene);
 					myGround.checkCollisions = true;
 
+                    //shadow
+                    var shadowGenerator = new BABYLON.ShadowGenerator(512, light)
+                    shadowGenerator.useBlurExponentialShadowMap = true;
+                    shadowGenerator.blurScale = 2;
+                    shadowGenerator.setDarkness(0.2);
+
                     //tree
                     var tree = new BABYLON.SceneLoader.ImportMesh("","","tree-05.babylon", scene, function(meshes){
                         meshes.forEach(function(mesh){
