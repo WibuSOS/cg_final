@@ -157,6 +157,19 @@
 					var skyBox = BABYLON.Mesh.CreateBox("skyBox", 4000.0, scene);
 					skyBox.material = skyMaterial;
 
+					var setSkyConfig = function (property, from, to) {
+						var keys = [
+							{ frame: 0, value: from },
+							{ frame: 100, value: to }
+							];
+		
+						var animation = new BABYLON.Animation("animation", property, 100, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+						animation.setKeys(keys);
+		
+						scene.stopAnimation(skyBox);
+						scene.beginDirectAnimation(skyBox, [animation], 0, 100, false, 1);
+					};
+
                     //light source
                     var light = new BABYLON.HemisphericLight("HemiLight",new BABYLON.Vector3(0,100,0),scene);
 
@@ -294,10 +307,10 @@
                     tree_button.cornerRadius = 20;
                     tree_button.color = "white";
                     tree_button.background = "green";
-                    tree_button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                    tree_button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                     tree_button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                    tree_button.left = "-30px";
-                    tree_button.top = "-190px";
+                    tree_button.left = "30px";
+                    tree_button.top = "-50px";
                     tree_button.onPointerUpObservable.add(function(){
                         BABYLON.SceneLoader.ImportMesh("","","tree-05.babylon", scene, function(meshes){
                             meshes.forEach(function(mesh){
@@ -307,6 +320,36 @@
                                 gizmoManager.attachableMeshes.push(mesh);
                             });
                         });
+                    });
+
+                    //button 4
+                    var day_button = BABYLON.GUI.Button.CreateSimpleButton("day_button", "Day");
+                    day_button.width = "100px";
+                    day_button.height = "50px";
+                    day_button.cornerRadius = 20;
+                    day_button.color = "white";
+                    day_button.background = "lightblue";
+                    day_button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    day_button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                    day_button.left = "1380px";
+                    day_button.top = "-190px";
+                    day_button.onPointerUpObservable.add(function(){
+                        setSkyConfig("material.inclination", skyMaterial.inclination, 0); 
+                    });
+
+                    //button 5
+					var night_button = BABYLON.GUI.Button.CreateSimpleButton("night_button", "Night");
+                    night_button.width = "100px";
+                    night_button.height = "50px";
+                    night_button.cornerRadius = 20;
+                    night_button.color = "white";
+                    night_button.background = "black";
+                    night_button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    night_button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                    night_button.left = "1380px";
+                    night_button.top = "-120px";
+                    night_button.onPointerUpObservable.add(function(){
+                        setSkyConfig("material.inclination", skyMaterial.inclination, -0.5); 
                     });
                     
                     //camera button & description
@@ -348,6 +391,8 @@
                     menu.addControl(chair_button);
                     menu.addControl(lazyChair_button);
                     menu.addControl(tree_button);
+                    menu.addControl(day_button);
+					menu.addControl(night_button);
 
                     //pointer lock
 					canvas.requestPointerLock();
