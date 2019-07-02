@@ -58,7 +58,7 @@
 
                     //function to download scene
                     var objectUrl;
-                    function doDownload(filename, scene) {
+                    function doDownload(filename, scene){
                         if(objectUrl) {
                             window.URL.revokeObjectURL(objectUrl);
                         }
@@ -84,17 +84,51 @@
                         link.dispatchEvent(click);          
                     }
 
+                    //function to upload object
+                    function upload_object(evt){
+                        var files = evt.target.files;
+                        var temp_url = URL.createObjectURL(files[0]);
+                        BABYLON.SceneLoader.ImportMesh("", "",temp_url, scene, function(meshes){
+                            meshes.forEach(function(mesh){
+                                mesh.checkCollisions = true;
+                                mesh.position = new BABYLON.Vector3(0,0,700);
+                                gizmoManager.attachableMeshes.push(mesh);
+                            });
+                        });
+                    }
+
+                    //function to upload scene
+                    function upload_scene(evt){
+                        var files = evt.target.files;
+                        var temp_url = URL.createObjectURL(files[0]);
+                        
+                        gizmoManager.attachableMeshes.forEach(function(mesh){
+                            mesh.dispose();
+                        });
+
+                        scene.meshes.forEach(function(mesh){
+                            mesh.dispose();
+                        });
+
+                        BABYLON.SceneLoader.ImportMesh("", "",temp_url, scene, function(meshes){
+                            meshes.forEach(function(mesh){
+                                mesh.checkCollisions = true;
+                                gizmoManager.attachableMeshes.push(mesh);
+                            });
+                        });
+                    }
+
                     //ground
                     var myGround = BABYLON.MeshBuilder.CreateGround("myGround", {width: 1500, height: 2000, subdivisions: 4}, scene);
 					myGround.checkCollisions = true;
 
                     //tree
                     var tree = new BABYLON.SceneLoader.ImportMesh("","","tree-05.babylon", scene, function(meshes){
-                    meshes.forEach(function(mesh){
-                        mesh.position = new BABYLON.Vector3(500,-1,0);
-                        mesh.checkCollisions = true;
-                        mesh.scaling = new BABYLON.Vector3(10,10,10);
-                        treeModel1 = mesh;
+                        meshes.forEach(function(mesh){
+                            mesh.position = new BABYLON.Vector3(500,-1,0);
+                            mesh.checkCollisions = true;
+                            mesh.scaling = new BABYLON.Vector3(10,10,10);
+                            gizmoManager.attachableMeshes.push(mesh);
                         });
                     });
                    
@@ -203,12 +237,40 @@
                             gizmoManager.boundingBoxGizmoEnabled = false;
                             delete_model = true;
                         }
-                        if(e.key == 'u' || e.key == 'U'){
+                        if(e.key == 'r' || e.key == 'R'){
                             if(confirm('Do you want to download current scene?')){
                                 doDownload('cg_final', scene);
                             } else {
                                 // Do nothing!
                             }
+                        }
+                        if(e.key == 'q' || e.key == 'Q'){
+                            // create input_form
+                            var input_form = window.document.createElement('input');
+                            input_form.type = "file";
+                            input_form.id = "file_form";
+
+                            //set listener onto input form and direct it to upload object
+                            input_form.addEventListener('change', upload_object, false);
+                            
+                            //click input_form
+                            var click = document.createEvent("MouseEvents");
+                            click.initEvent("click", true, false);
+                            input_form.dispatchEvent(click);
+                        }
+                        if(e.key == 'e' || e.key == 'E'){
+                            // create input_form
+                            var input_form = window.document.createElement('input');
+                            input_form.type = "file";
+                            input_form.id = "file_form";
+
+                            //set listener onto input form and direct it to upload scene
+                            input_form.addEventListener('change', upload_scene, false);
+                            
+                            //click input_form
+                            var click = document.createEvent("MouseEvents");
+                            click.initEvent("click", true, false);
+                            input_form.dispatchEvent(click);
                         }
                     }
 
@@ -220,24 +282,13 @@
                     };
                     
                     //house model 1
-                    var house_model = [];
                     BABYLON.SceneLoader.ImportMesh("","","house.babylon", scene, function(meshes){
                         meshes.forEach(function(mesh){
                             mesh.position = new BABYLON.Vector3(0,-1,0);
                             mesh.checkCollisions = true;
-                            house_model.push(mesh);
+                            gizmoManager.attachableMeshes.push(mesh);
                         });
                     });
-
-                    //house model 2
-                    // BABYLON.SceneLoader.ImportMesh("","","mini-house.babylon", scene, function(meshes){
-                    //     meshes.forEach(function(mesh){
-                    //         mesh.position = new BABYLON.Vector3(0,0,0);
-                    //         mesh.scaling = new BABYLON.Vector3(1000,1000,1000);
-                    //         mesh.checkCollisions = true;
-                    //         house_model.push(mesh);
-                    //     });
-                    // });
                     
                     //camera 3rd person
                     var camera1 = new BABYLON.ArcRotateCamera("arcCamera", BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(60), 2000, new BABYLON.Vector3(0, 0, 0), scene);
